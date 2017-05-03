@@ -17,11 +17,10 @@ namespace Sales
 
             var endpointConfiguration = new EndpointConfiguration("Sales");
 
-            var transport = endpointConfiguration.UseTransport<MsmqTransport>();
+            var transport = endpointConfiguration.UseTransport<LearningTransport>();
 
             endpointConfiguration.UseSerialization<JsonSerializer>();
             endpointConfiguration.UsePersistence<InMemoryPersistence>();
-            endpointConfiguration.SendFailedMessagesTo("error");
             endpointConfiguration.EnableInstallers();
 
             var recoverability = endpointConfiguration.Recoverability();
