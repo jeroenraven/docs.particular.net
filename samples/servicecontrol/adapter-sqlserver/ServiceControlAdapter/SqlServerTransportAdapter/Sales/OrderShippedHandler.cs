@@ -14,7 +14,7 @@ class OrderShippedHandler : IHandleMessages<OrderShipped>
 
     public Task Handle(OrderShipped message, IMessageHandlerContext context)
     {
-        log.Info($"Completing order {message.OrderId} worth {message.Value}");
+        log.Info($"Completing order {message.OrderId} for {message.Value}");
         return db.Store();
     }
 }

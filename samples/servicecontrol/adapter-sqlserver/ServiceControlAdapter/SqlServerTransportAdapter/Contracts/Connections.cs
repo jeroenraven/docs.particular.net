@@ -32,7 +32,7 @@ public static class Connections
         {
             return Shipping;
         }
-        if (destination == "audit" || destination == "error" || destination == "Particular.ServiceControl")
+        if (destination == "audit" || destination == "error" || destination == "Particular.ServiceControl" || destination == "poison")
         {
             return Adapter;
         }

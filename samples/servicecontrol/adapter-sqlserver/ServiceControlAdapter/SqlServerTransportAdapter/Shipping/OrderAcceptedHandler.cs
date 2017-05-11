@@ -14,7 +14,7 @@ class OrderAcceptedHandler : IHandleMessages<OrderAccepted>
 
     public async Task Handle(OrderAccepted message, IMessageHandlerContext context)
     {
-        log.Info($"Shipping order {message.OrderId} worth {message.Value}");
+        log.Info($"Shipping order {message.OrderId} for {message.Value}");
         await db.Store();
         await context.Publish(new OrderShipped
         {
