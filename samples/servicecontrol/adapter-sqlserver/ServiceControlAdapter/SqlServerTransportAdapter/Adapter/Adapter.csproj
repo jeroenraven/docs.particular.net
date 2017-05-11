@@ -65,7 +65,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Contracts\Shared.csproj">
+    <ProjectReference Include="..\Shared\Shared.csproj">
       <Project>{7AE9CA65-44F0-4382-9154-9CD5BF38C2AC}</Project>
       <Name>Shared</Name>
     </ProjectReference>
