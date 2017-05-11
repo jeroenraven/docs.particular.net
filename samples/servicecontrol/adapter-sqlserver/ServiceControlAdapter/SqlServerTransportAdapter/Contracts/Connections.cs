@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 
 public static class Connections
@@ -22,20 +23,25 @@ public static class Connections
         return connection;
     }
 
+    #region GetConnectionString
+
+    static readonly string[] AdapterQueues = {"audit", "error", "poison", "Particular.ServiceControl"};
+
     static string GetConnectionString(string destination)
-    {
-        if (destination.StartsWith("Samples.ServiceControl.SqlServerTransportAdapter.Sales"))
+    {        
+        if (destination.StartsWith("Samples.ServiceControl.SqlServerTransportAdapter.Sales", StringComparison.OrdinalIgnoreCase))
         {
             return Sales;
         }
-        if (destination.StartsWith("Samples.ServiceControl.SqlServerTransportAdapter.Shipping"))
+        if (destination.StartsWith("Samples.ServiceControl.SqlServerTransportAdapter.Shipping", StringComparison.OrdinalIgnoreCase))
         {
             return Shipping;
         }
-        if (destination == "audit" || destination == "error" || destination == "Particular.ServiceControl" || destination == "poison")
+        if (AdapterQueues.Any(q => string.Equals(q, destination, StringComparison.OrdinalIgnoreCase)))
         {
             return Adapter;
         }
         throw new Exception("Unknown destination: " + destination);
     }
+    #endregion
 }

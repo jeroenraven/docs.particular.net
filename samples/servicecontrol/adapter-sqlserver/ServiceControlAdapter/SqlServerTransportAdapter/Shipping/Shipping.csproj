@@ -41,6 +41,10 @@
       <HintPath>..\..\..\..\..\..\packages\NServiceBus.SqlServer.3.0.1\lib\net452\NServiceBus.Transport.SQLServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="ServiceControl.Plugin.Nsb6.Heartbeat, Version=3.0.0.0, Culture=neutral, PublicKeyToken=9fc386479f8a226c, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\..\..\packages\ServiceControl.Plugin.Nsb6.Heartbeat.3.0.1\lib\net452\ServiceControl.Plugin.Nsb6.Heartbeat.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -61,9 +65,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Contracts\Contracts.csproj">
+    <ProjectReference Include="..\Contracts\Shared.csproj">
       <Project>{7ae9ca65-44f0-4382-9154-9cd5bf38c2ac}</Project>
-      <Name>Contracts</Name>
+      <Name>Shared</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
