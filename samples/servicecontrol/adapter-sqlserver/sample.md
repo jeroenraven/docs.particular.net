@@ -53,7 +53,7 @@ The Shared project contains the message contracts and the physical topology defi
 
 snippet: GetConnectionString
 
-The `StartsWith` comparison ensures that the [satellite](/nservicebus/satellites.md/) queues are correctly addressed. The `poison` queue is used by the adapter for unrecoverable failures. 
+The `StartsWith` comparison ensures that the [satellite](/nservicebus/satellites/) queues are correctly addressed. The `poison` queue is used by the adapter for unrecoverable failures. 
 
 This topology is used in business endpoints (Sales, Shipping) as well as in the Adapter.
 
