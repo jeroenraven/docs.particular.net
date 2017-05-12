@@ -16,7 +16,7 @@ related:
 	* Use local `ServiceControl` on local SQL Server Express as the database (ServiceControl Manager will automatically create queue tables in the database). 
  1. Ensure the `ServiceControl` process is running before running the sample.
  1. In the same SQL Server instance, create databases for the endpoints: `sales`, `shipping` and `adapter`  
- 1. [Install ServicePulse](https://docs.particular.net/servicepulse/installation)
+ 1. [Install ServicePulse](/servicepulse/installation.md)
 
 NOTE: In order to connect to a different SQL Server instance, ensure all database connection strings are updated in the sample.
 
@@ -53,7 +53,7 @@ The Shared project contains the message contracts and the physical topology defi
 
 snippet: GetConnectionString
 
-The `StartsWith` comparison ensures that the [satellite](https://docs.particular.net/nservicebus/satellites/) queues are correctly addressed. The `poison` queue is used by the adapter for unrecoverable failures. 
+The `StartsWith` comparison ensures that the [satellite](/nservicebus/satellites.md/) queues are correctly addressed. The `poison` queue is used by the adapter for unrecoverable failures. 
 
 This topology is used in business endpoints (Sales, Shipping) as well as in the Adapter.
 
