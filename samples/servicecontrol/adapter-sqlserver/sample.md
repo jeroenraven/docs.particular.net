@@ -12,7 +12,7 @@ related:
  1. [Install ServiceControl](/servicecontrol/installation.md).
  1. Using [ServiceControl Management](/servicecontrol/license.md#servicecontrol-management-app) tool, set up ServiceControl to monitor endpoints using SQL Server transport.
 	 
-	* Use `Particular.ServiceControl.SQL` as the instance name (make sure you don't have another instance of SC running with the same name).
+	* Use `Particular.ServiceControl.SQL` as the instance name (make sure there is no other instance of SC running with the same name).
 	* Use local `ServiceControl` on local SQL Server Express as the database (ServiceControl Manager will automatically create queue tables in the database). 
  1. Ensure the `ServiceControl` process is running before running the sample.
  1. In the same SQL Server instance, create databases for the endpoints: `sales`, `shipping` and `adapter`  
