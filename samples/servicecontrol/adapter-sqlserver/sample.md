@@ -10,31 +10,31 @@ related:
 ## Prerequisistes
 
  1. [Install ServiceControl](/servicecontrol/installation.md).
- 1. Using the [ServiceControl Management](/servicecontrol/license.md#servicecontrol-management-app) tool, set up ServiceControl to monitor endpoints using SQL Server transport.
+ 1. Using [ServiceControl Management](/servicecontrol/license.md#servicecontrol-management-app) tool, set up ServiceControl to monitor endpoints using SQL Server transport.
 	 
-	* Use `Particular.ServiceControl.SQL` as the instance name
-	* Use local `ServiceControl` on local SQL Server Express as the database (ServiceControl Manager will automatically create queue tables in the database)  
+	* Use `Particular.ServiceControl.SQL` as the instance name (make sure you don't have another instance of SC running with the same name).
+	* Use local `ServiceControl` on local SQL Server Express as the database (ServiceControl Manager will automatically create queue tables in the database). 
  1. Ensure the `ServiceControl` process is running before running the sample.
- 1. In the same instance of SQL Server, create databases for the endpoints: `sales`, `shipping` and `adapter`  
+ 1. In the same SQL Server instance, create databases for the endpoints: `sales`, `shipping` and `adapter`  
  1. [Install ServicePulse](https://docs.particular.net/servicepulse/installation)
 
-NOTE: In order to use a different SQL Server instance than local SQL Server Express, make sure the connection strings are updated in all places.
+NOTE: In order to connect to a different SQL Server instance, ensure all database connection strings are updated in the sample.
 
 ## Running the project
 
- 1. Start the following projects: Adapter, Sales and Shipping (right-click on the project, select the `Debug > Start new instance` option).
- 1. Open ServicePulse and select the Endpoints Overview view. The `Samples.ServiceControl.SqlServerTransportAdapter.Shipping` endpoint should be visible in the Active Endpoints tab as it has the Heartbeats plugin installed
+ 1. Start the projects: Adapter, Sales and Shipping (right-click on the project, select the `Debug > Start new instance` option). Make sure adapter starts first because on start-up it creates a queue that is used for heartbeats.
+ 1. Open ServicePulse and select the Endpoints Overview. `Samples.ServiceControl.SqlServerTransportAdapter.Shipping` endpoint should be visible in the Active Endpoints tab as it has the Heartbeats plugin installed
  1. Go to the Sales console and press `o` to create an order.
- 1. Notice the Shipping endpoint receives the `OrderAccepted` event from Sales and publishes an `OrderShipped` event.
+ 1. Notice the Shipping endpoint receives the `OrderAccepted` event from Sales and publishes `OrderShipped` event.
  1. Notice the Sales endpoint logs that it processed the `OrderShipped` event. 
- 1. Go to the Sales console and press `f` to simulate a database failure.
+ 1. Go to the Sales console and press `f` to simulate database failure.
  1. Press `o` to create another order. Notice the `OrderShipped` event fails processing in Sales and is moved to the error queue
- 1. Press `f` again to disable database failure simulation in the Sales console.
+ 1. Press `f` again to disable database failure simulation in Sales.
  1. Go to the Shipping console and press `f` to simulate database failure.
- 1. Go back to the Sales console and press `o` to create yet another order. Notice the `OrderAccepted` event fails in Shipping and is moved to the error queue.
- 1. Press `f` again to disable database failure simulation in the Shipping console.
+ 1. Go back to Sales and press `o` to create yet another order. Notice the `OrderAccepted` event fails in Shipping and is moved to the error queue.
+ 1. Press `f` again to disable database failure simulation in Shipping.
  1. Open ServicePulse and select the Failed Messages view.
- 1. Notice one failed message group `System.Exception: Database.Store()` with two messages. Open the group.
+ 1. Notice the existence of one failed message group titled `System.Exception: Database.Store()` with two messages. Open the group.
  1. One of the messages is `OrderAccepted` which failed in `Shipping`, the other is `OrderShipped` which failed in `Sales`.
  1. Press the "Retry all" button.
  1. Go to the Shipping console and verify that the `OrderAccepted` event has been successfully processed.
@@ -49,7 +49,7 @@ The solution consists of four projects.
 
 ### Shared
 
-The Shared project contains the message definitions and the physical topology definition. The topology is defined in the `Connections` class via a method that takes the name of the queue and returns the connection string to be used to access that queue.
+The Shared project contains the message contracts and the physical topology definition. The topology is defined in the `Connections` class via a method that takes the name of the queue table ([physical address](/nservicebus/sqlserver/addressing.md)) and returns the connection string to be used to access that queue.
 
 snippet: GetConnectionString
 
@@ -63,7 +63,7 @@ The Sales and Shipping projects contain endpoints that simulate execution of bus
 
 The Sales and Shipping endpoints use separate databases and their transports are configured in the [multi-instance](/nservicebus/sqlserver/deployment-options.md#modes-overview-multi-instance) mode using the topology definition from the `Connections` class.
 
-The business endpoints include a database failure simulation mode (toggled by pressing `f`) which can be used to generate failed messages for demonstrating message retry functionality.
+The business endpoints include database failure simulation mode (toggled by pressing `f`) which can be used to generate failed messages for demonstrating message retry functionality.
 
 The Shipping endpoint has the Heartbeats plug-in installed to enable uptime monitoring via ServicePulse.
 
@@ -73,6 +73,7 @@ The Adapter project hosts the `ServiceControl.TransportAdapter`. The adapter has
 
 snippet: AdapterTransport
 
+because the purpose is to keep ServiceControl unaware of specific details of endpoints' transport topology.
 The endpoint-facing side config enables the [multi-instance](/nservicebus/sqlserver/deployment-options.md#modes-overview-multi-instance) mode of SQL Server transport using the shared topology.
 
 snippet: EndpointSideConfig
@@ -87,11 +88,11 @@ snippet: ControlQueueOverride
 
 ## How it works
 
-The purpose of the adapter is to isolate ServiceControl from the specifics of physical deployment topology of the business endpoints (such as [multi-instance](/nservicebus/sqlserver/deployment-options.md#modes-overview-multi-instance) mode. In order to do so, the adapter presents to the business endpoints the same interface as regular service control (in form of `audit`, `error` and `Particular.ServiceControl`) queues.
+The purpose of the adapter is to isolate ServiceControl from specifics of physical deployment topology of the business endpoints (such as [multi-instance](/nservicebus/sqlserver/deployment-options.md#modes-overview-multi-instance) mode. In order to do so, the adapter provides a ServiceControl interface to the business endpoints.
 
 ### Heartbeats
 
-The heartbeat messages arrive at adapter's `Particular.ServiceControl` queue. From there they are moved to the `Particular.ServiceControl.SQL` queue in the ServiceControl database. In case of problems (e.g. the destination database is down) the forward attempts are repeated a configurable number of times after which messages are dropped to prevent the queue from growing indefinitely.
+The heartbeat messages arrive at adapter's `Particular.ServiceControl` queue. From there there are moved to `Particular.ServiceControl.SQL` queue in ServiceControl database. In case of problems (e.g. destination database being down) the forward attempts are repeated configurable number of times after which messages are dropped to prevent the queue from growing indefinitely.
 
 ### Audits
 
@@ -101,7 +102,7 @@ The audit messages arrive at adapter's `audit` queue. From there there are moved
 
 If a message fails all recoverability attempts in a business endpoint, it is moved to the `error` queue located in the adapter database. The adapter enriches the message by adding `ServiceControl.RetryTo` header pointing to the adapter's input queue in ServiceControl database (`ServiceControl.SqlServer.Adapter.Retry`). Next the message is moved to the `error` queue in ServiceControl database and ingested into ServiceControl RavenDB store. 
 
-When retrying, ServiceControl looks for `ServiceControl.RetryTo` header and, if found, messages are sent to the queue from that header instead of the ultimate destination.
+When retrying, ServiceControl looks for `ServiceControl.RetryTo` header and, if it finds it, it sends the message to the queue from that header instead of the ultimate destination.
 
 The adapter picks up the message and forwards it to the destination using its endpoint-facing transport.
 
