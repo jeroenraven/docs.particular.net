@@ -46,7 +46,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Database.cs" />
     <Compile Include="OrderAcceptedHandler.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>

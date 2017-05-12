@@ -42,7 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Database.cs" />
     <Compile Include="OrderShippedHandler.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>

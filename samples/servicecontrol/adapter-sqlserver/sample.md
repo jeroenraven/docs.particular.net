@@ -27,14 +27,14 @@ NOTE: In order to connect to a different SQL Server instance, ensure all databas
  1. Go to the Sales console and press `o` to create an order.
  1. Notice the Shipping endpoint receives the `OrderAccepted` event from Sales and publishes `OrderShipped` event.
  1. Notice the Sales endpoint logs that it processed the `OrderShipped` event. 
- 1. Go to the Sales console and press `f` to simulate database failure.
+ 1. Go to the Sales console and press `f` to simulate message processing failure.
  1. Press `o` to create another order. Notice the `OrderShipped` event fails processing in Sales and is moved to the error queue
- 1. Press `f` again to disable database failure simulation in Sales.
- 1. Go to the Shipping console and press `f` to simulate database failure.
+ 1. Press `f` again to disable message processing failure simulation in Sales.
+ 1. Go to the Shipping console and press `f` to simulate message processing failure.
  1. Go back to Sales and press `o` to create yet another order. Notice the `OrderAccepted` event fails in Shipping and is moved to the error queue.
- 1. Press `f` again to disable database failure simulation in Shipping.
+ 1. Press `f` again to disable message processing failure simulation in Shipping.
  1. Open ServicePulse and select the Failed Messages view.
- 1. Notice the existence of one failed message group titled `System.Exception: Database.Store()` with two messages. Open the group.
+ 1. Notice the existence of one failed message group with two messages. Open the group.
  1. One of the messages is `OrderAccepted` which failed in `Shipping`, the other is `OrderShipped` which failed in `Sales`.
  1. Press the "Retry all" button.
  1. Go to the Shipping console and verify that the `OrderAccepted` event has been successfully processed.
@@ -63,7 +63,7 @@ The Sales and Shipping projects contain endpoints that simulate execution of bus
 
 The Sales and Shipping endpoints use separate databases and their transports are configured in the [multi-instance](/nservicebus/sqlserver/deployment-options.md#modes-overview-multi-instance) mode using the topology definition from the `Connections` class.
 
-The business endpoints include database failure simulation mode (toggled by pressing `f`) which can be used to generate failed messages for demonstrating message retry functionality.
+The business endpoints include message processing failure simulation mode (toggled by pressing `f`) which can be used to generate failed messages for demonstrating message retry functionality.
 
 The Shipping endpoint has the Heartbeats plug-in installed to enable uptime monitoring via ServicePulse.
 

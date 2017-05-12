@@ -36,6 +36,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChaosGenerator.cs" />
     <Compile Include="OrderAccepted.cs" />
     <Compile Include="OrderShipped.cs" />
     <Compile Include="Connections.cs" />

@@ -23,10 +23,10 @@ class Program
 
         endpointConfiguration.UsePersistence<InMemoryPersistence>();
 
-        var database = new Database();
+        var chaos = new ChaosGenerator();
         endpointConfiguration.RegisterComponents(c =>
         {
-            c.ConfigureComponent(() => database, DependencyLifecycle.SingleInstance);
+            c.ConfigureComponent(() => chaos, DependencyLifecycle.SingleInstance);
         });
 
         endpointConfiguration.Recoverability()
@@ -42,7 +42,7 @@ class Program
         var endpointInstance = await Endpoint.Start(endpointConfiguration)
             .ConfigureAwait(false);
         Console.WriteLine("Press enter to exit");
-        Console.WriteLine("Press 'f' to toggle simulating of database failure");
+        Console.WriteLine("Press 'f' to toggle simulating of message processing failure");
         while (true)
         {
             var key = Console.ReadKey();
@@ -54,8 +54,8 @@ class Program
             var lowerInvariant = char.ToLowerInvariant(key.KeyChar);
             if (lowerInvariant == 'f')
             {
-                database.IsFailing = !database.IsFailing;
-                Console.WriteLine("Database failure simulation is now turned " + (database.IsFailing ? "on" : "off"));
+                chaos.IsFailing = !chaos.IsFailing;
+                Console.WriteLine("Failure simulation is now turned " + (chaos.IsFailing ? "on" : "off"));
             }
         }
         await endpointInstance.Stop()

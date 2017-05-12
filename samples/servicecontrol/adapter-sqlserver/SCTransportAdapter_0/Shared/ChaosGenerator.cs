@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-class Database
+public class ChaosGenerator
 {
     public bool IsFailing { get; set; }
 
-    public Task Store()
+    public Task Invoke()
     {
         if (IsFailing)
         {

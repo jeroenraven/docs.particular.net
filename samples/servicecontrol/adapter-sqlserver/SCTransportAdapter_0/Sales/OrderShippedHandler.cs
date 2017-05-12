@@ -5,16 +5,16 @@ using NServiceBus.Logging;
 class OrderShippedHandler : IHandleMessages<OrderShipped>
 {
     static ILog log = LogManager.GetLogger<OrderShippedHandler>();
-    Database db;
+    ChaosGenerator chaos;
 
-    public OrderShippedHandler(Database db)
+    public OrderShippedHandler(ChaosGenerator chaos)
     {
-        this.db = db;
+        this.chaos = chaos;
     }
 
     public Task Handle(OrderShipped message, IMessageHandlerContext context)
     {
         log.Info($"Completing order {message.OrderId} for {message.Value}");
-        return db.Store();
+        return chaos.Invoke();
     }
 }

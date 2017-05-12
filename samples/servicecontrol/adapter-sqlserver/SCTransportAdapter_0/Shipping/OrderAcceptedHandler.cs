@@ -5,17 +5,17 @@ using NServiceBus.Logging;
 class OrderAcceptedHandler : IHandleMessages<OrderAccepted>
 {
     static ILog log = LogManager.GetLogger<OrderAcceptedHandler>();
-    Database db;
+    ChaosGenerator chaos;
 
-    public OrderAcceptedHandler(Database db)
+    public OrderAcceptedHandler(ChaosGenerator chaos)
     {
-        this.db = db;
+        this.chaos = chaos;
     }
 
     public async Task Handle(OrderAccepted message, IMessageHandlerContext context)
     {
         log.Info($"Shipping order {message.OrderId} for {message.Value}");
-        await db.Store();
+        await chaos.Invoke();
         await context.Publish(new OrderShipped
         {
             OrderId = message.OrderId,
